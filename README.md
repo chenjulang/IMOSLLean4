@@ -1,3 +1,5 @@
+一键打开：https://gitpod.io/new/#/https://github.com/chenjulang/IMOSLLean4
+
 # IMOSLLean4
 
 Formalization & Generalization of IMO Shortlist Problems in Lean 4.
