@@ -3,11 +3,12 @@ Copyright (c) 2024 Gian Cordana Sanjaya. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Gian Cordana Sanjaya
 -/
-
 import Mathlib.Algebra.BigOperators.Ring
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Algebra.Order.Field.Rat
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+set_option linter.unusedTactic false
+
 
 /-!
 # IMO 2006 A2
@@ -26,6 +27,16 @@ def a : ℕ → ℚ
   | 0 => -1
   | n + 1 => -(univ : Finset (Fin (n + 1))).sum λ i ↦ a i / (n + 2 - i : ℕ)
 
+#eval a 0
+#eval a 1
+#eval a 2
+#eval a 3
+#eval a 4
+#eval a 5
+#eval a 6
+
+
+
 lemma a_zero : a 0 = -1 := by rfl
 
 lemma a_succ (n) : a (n + 1) = -(range (n + 1)).sum λ i ↦ a i / (n + 2 - i : ℕ) := by
@@ -35,6 +46,25 @@ lemma a_one : a 1 = mkRat 1 2 := by rfl
 
 lemma a_nonzero (h : n ≠ 0) : a n = -(range n).sum λ i ↦ a i / (n + 1 - i : ℕ) :=
   Nat.succ_pred_eq_of_ne_zero h ▸ a_succ n.pred
+-- #print a_nonzero
+
+lemma My_a_nonzero (h : n ≠ 0) :
+  a n = -(range n).sum λ i ↦ a i / (n + 1 - i : ℕ)
+  := by
+    have h1:= a_succ n.pred
+    have h2:= Nat.succ_pred_eq_of_ne_zero h
+    simp [h2] at h1
+    have h3: n - 1 + 1 = n := by exact h2
+    rw [h3] at h1
+    rw [h1]
+    simp only [neg_inj]
+    have h4: n - 1 + 2 = n + 1 := by
+      exact
+      Eq.symm ((fun {m k n} ↦ Nat.add_right_cancel_iff.mpr) (id (Eq.symm h2)))
+    rw [h4]
+    done
+
+
 
 lemma a_nonzero' (h : n ≠ 0) : (range (n + 1)).sum (λ i ↦ a i / (n + 1 - i : ℕ)) = 0 := by
   rw [sum_range_succ, ← neg_eq_iff_add_eq_zero, ← a_nonzero h,
